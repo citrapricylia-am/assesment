@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Assessment Wajib</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <!---Firebase SDK-->
+   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+
+
+    <style>
+      body {
+        font-family: "Open Sans", sans-serif;
+        background-color: #fdfbec;
+        color: #14532d;
+        padding: 2rem;
+      }
+      .assessment-container {
+        display: flex;
+        gap: 2rem;
+      }
+      .sidebar {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        height: fit-content;
+        position: sticky;
+        top: 1rem;
+      }
+      .sidebar h5 {
+        margin-bottom: 1rem;
+      }
+      .sidebar button {
+        display: block;
+        background: none;
+        border: none;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        width: 100%;
+        border-radius: 8px;
+        color: #14532d;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        transition: background 0.3s;
+      }
+      .sidebar button:hover,
+      .sidebar button.active {
+        background-color: #facc15;
+        color: #14532d;
+      }
+      .question-box {
+        flex: 1;
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      }
+      .question-item {
+        margin-bottom: 2rem;
+      }
+      .question-item label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      .options {
+        display: flex;
+        gap: 1rem;
+      }
+      .options button {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 2px solid #ccc;
+        background: #fdfbec;
+        font-weight: bold;
+        color: #14532d;
+        transition: 0.2s;
+      }
+      .options button.active {
+        background-color: #14532d;
+        color: white;
+        border-color: #14532d;
+      }
+      .btn-lanjut {
+        margin-top: 2rem;
+        display: inline-block;
+        background-color: #14532d;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+      .btn-lanjut:hover {
+        background-color: #0f3c21;
+      }
+      /* ... CSS lama kamu ... */
+
+      .custom-radio-group {
+        display: block;
+        gap: 1rem;
+      }
+
+      .custom-radio-group .btn-check {
+        display: none;
+      }
+
+      .custom-radio-group .custom-option {
+        padding: 0.4rem 1rem;
+        border: 1px solid #14532d;
+        border-radius: 8px;
+        font-weight: 500;
+        color: #14532d;
+        background-color: transparent;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 5px;
+      }
+
+      .custom-radio-group .btn-check:checked + .custom-option {
+        background-color: #14532d;
+        color: white;
+      }
+      .kategori-buttons button {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .kategori-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+  .custom-radio-group .custom-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+  <div class="col-12">
+    <div class="kategori-buttons mb-4 d-flex flex-wrap gap-2">
+      <button class="btn btn-outline-dark active" data-kategori="pilar1" onclick="tampilkanSoal('pilar1', this)">Inovasi Kebijakan dan Perencanaan<span class="badge bg-danger ms-2">Wajib</span></button>
+      <button class="btn btn-outline-dark" data-kategori="pilar2" onclick="tampilkanSoal('pilar2', this)">Tata Kelola Multipihak<span class="badge bg-danger ms-2">Wajib</span></button>
+      <button class="btn btn-outline-dark" data-kategori="pilar3" onclick="tampilkanSoal('pilar3', this)">Ko-Kreasi Bisnis & Investasi<span class="badge bg-danger ms-2">Wajib</span></button>
+      <button class="btn btn-outline-dark" data-kategori="pilar4" onclick="tampilkanSoal('pilar4', this)">Pengukuran Progress<span class="badge bg-danger ms-2">Wajib</span></button>
+      <button class="btn btn-outline-dark" data-kategori="pilar5" onclick="tampilkanSoal('pilar5', this)">Amplifikasi Narasi<span class="badge bg-danger ms-2">Wajib</span></button>
+    </div>
+    <div id="soalContainer" class="soal-container"></div>
+  </div>
+</div>
+
+    <script>
+      const jawabanUser = {}; // harus ada di luar semua fungsi
+      const soalData = {
+        pilar1: [
+          {
+            id: "1",
+            pertanyaan:
+              "Kepatuhan penyusunan RPJMD berdasarkkan KLHS & DDDTLH:",
+            opsi: [
+              {
+                label: "Tidak ada dokumen KLHS; tidak ada analisis DDDTLH",
+                skor: 0,
+              },
+              {
+                label:
+                  "KLHS tersedia tapi belum digunakan dalam RPJMD; sebagian analisis DDDTLH ada",
+                skor: 1,
+              },
+              {
+                label:
+                  "KLHS dan sebagian besar analisis DDDTLH digunakan sebagai dasar RPJMD",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "2",
+            pertanyaan: "Stabilitas keberadaan lahan penyedia pangan:",
+            opsi: [
+              {
+                label: "Tidak ada data atau target yang terdokumentasi",
+                skor: 0,
+              },
+              {
+                label:
+                  "Ada data lahan pangan tapi belum ada target atau belum konsisten",
+                skor: 1,
+              },
+              {
+                label:
+                  "Target lahan pangan dan data realisasi tersedia dan sinkron",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "3",
+            pertanyaan: "Kebijakan dan/atau rencana ekonomi sesuai SDG:",
+            opsi: [
+              {
+                label: "Tidak ada RAD atau dokuemn pembangunan lestari",
+                skor: 0,
+              },
+              {
+                label: "Ada draft atau dokumen sebagian, belum implementatif",
+                skor: 1,
+              },
+              {
+                label: "Dokumen tersedia, mencakup stakeholder & anggaran",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "4",
+            pertanyaan: "Penurunan angka pengangguran:",
+            opsi: [
+              { label: "Tidak ada target atau data pengangguran", skor: 0 },
+              {
+                label: "Ada target atau data, belum konsisten antar tahun",
+                skor: 1,
+              },
+              {
+                label: "Target dan data pengangguran tersedia dan dianalisis",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "5",
+            pertanyaan: "Peningkatan ekonomi dari sektor unggulan kabupaten:",
+            opsi: [
+              {
+                label: "Tidak ada data atau sektor prioritas tidak jelas",
+                skor: 0,
+              },
+              {
+                label:
+                  "Sektor sudah diidentifikasi tapi belum ada nilai kontribusinya",
+                skor: 1,
+              },
+              {
+                label:
+                  "Data kontribusi PDRB sektor unggulan tersedia dan stabil",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "6",
+            pertanyaan: "Penurunan penduduk miskin dan ketimpangan ekonomi:",
+            opsi: [
+              {
+                label: "Tidak ada data kemiskinan atau rencana penanggulangan",
+                skor: 0,
+              },
+              {
+                label:
+                  "Data tersedia tapi belum ada target penurunan atau tim khusus",
+                skor: 1,
+              },
+              {
+                label: "Data lengkap + target jelas + gugus tugas aktif",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "7",
+            pertanyaan:
+              "Forum kelembagaan multipihak dalam perencanaan pembangunan:",
+            opsi: [
+              {
+                label: "Tidak ada forum atau dokumentasi aktivitas multipihak",
+                skor: 0,
+              },
+              {
+                label:
+                  "Forum ada tapi belum aktif atau belum terintegrasi dalam kebijakan",
+                skor: 1,
+              },
+              {
+                label:
+                  "Forum aktif + diakui secara resmi + ada output kebijakan",
+                skor: 2,
+              },
+            ],
+          },
+        ],
+        pilar2: [
+          {
+            id: "8",
+            pertanyaan:
+              "Forum kelembagaan multipihak dalam perencanaan pembangunan:",
+            opsi: [
+              {
+                label: "Tidak ada forum atau dokumentasi aktivitas multipihak",
+                skor: 0,
+              },
+              {
+                label:
+                  "Forum ada tapi belum aktif atau belum terintegrasi dalam kebijakan",
+                skor: 1,
+              },
+              {
+                label:
+                  "Forum aktif + diakui secara resmi + ada output kebijakan",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "9",
+            pertanyaan: "Basis data masyarakat hukum adat:",
+            opsi: [
+              {
+                label: "Tidak ada basis data atau proses identifikasi",
+                skor: 0,
+              },
+              {
+                label: "Data parsial atau belum terverifikasi secara formal",
+                skor: 1,
+              },
+              {
+                label:
+                  "Basis data lengkap + terverfikasi + digunakan dalam perencanaan",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "10",
+            pertanyaan: "Target awal PDRB tahunan:",
+            opsi: [
+              {
+                label:
+                  "Tidak ada data atau tidak ada target yang terdokumentasi",
+                skor: 0,
+              },
+              {
+                label:
+                  "Target ada tapi tidak konsisten digunakan atau dianalisis",
+                skor: 1,
+              },
+              {
+                label:
+                  "Target dan realisasi tersedia tiap tahun + digunakan dalam evaluasi",
+                skor: 2,
+              },
+            ],
+          },
+        ],
+        pilar3: [
+          {
+            id: "11",
+            pertanyaan: "Pendapatan perkapita daerah:",
+            opsi: [
+              {
+                label:
+                  "Tidak tersedia data atau tidak dihitung ditingkat kabupaten",
+                skor: 0,
+              },
+              {
+                label: "Data tersedia tapi tidak dianalisis atau dipakai",
+                skor: 1,
+              },
+              {
+                label:
+                  "Data tersedia + digunakan sebagai indikator utama dalam perencanaan",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "12",
+            pertanyaan: "Produktivitas & produksi komoditas strategis:",
+            opsi: [
+              {
+                label: "Tidak ada data atau daftar komoditas strategis",
+                skor: 0,
+              },
+              {
+                label: "Data ada tapi belum lengkap atau belum diupdate",
+                skor: 1,
+              },
+              {
+                label:
+                  "Data lengkap, tahunan, dan digunakan untuk perencanaan ekonomi",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "13",
+            pertanyaan:
+              "Target produksi pangan utama nasional (padi, jagung, kedelai):",
+            opsi: [
+              { label: "Tidak ada target atau data aktual produksi", skor: 0 },
+              {
+                label:
+                  "Target tersedia, tapi belum diselaraskan atau dievaluasi",
+                skor: 1,
+              },
+              {
+                label: "Target dan realisasi tahunan tersedia dan dilaporkan",
+                skor: 2,
+              },
+            ],
+          },
+          {
+            id: "14",
+            pertanyaan: "Tercapainya target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah:",
+            opsi: [
+              {
+                label: "Tidak ada target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah",
+                skor: 0,
+              },
+              {
+                label: "Target pendapatan perkapita di kabupaten belum tercapai, masih dalam proses",
+                skor: 1,
+              },
+              {
+                label:
+                  "Target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah sudah tercapai",
+                skor: 2,
+              },
+            ],
+          },
+        ],
+        pilar4: [
+          {
+            id: "15",
+            pertanyaan: "Tercapainya target kesesuaian pemanfaatan ruang wilayah kabupaten dengan RT/RW Kabupaten:",
+            opsi: [
+              {
+                label:
+                  "Tidak ada data pemanfaatan ruang wilayah kabupaten",
+                skor: 0,
+              },
+              {
+                label: "Sudah ada data pemanfaatan ruang wilayah kabupaten tetapi belum sesuai dengan RT/RW Kabupaten",
+                skor: 1,
+              },
+              {
+                label:
+                  "Data aktual pemanfaatan ruang wilayah kabupaten sudah sesuai dengan RT/RW Kabupaten",
+                skor: 2,
+              },
+            ],
+          },
+        ],
+        pilar5: [
+          {
+            id: "16",
+            pertanyaan: "Terdapat sistem informasi kabupaten sesuai dengan kebijakan Satu Data Indonesia yang dapat diakses oleh publik:",
+            opsi: [
+              {
+                label: "Belum ada sistem informasi kabupaten yang sesuai dengan kebijakan Satu Data Indonesia yang dapat diakses oleh publik",
+                skor: 0,
+              },
+              {
+                label: "Sistem Informasi kabupaten masih dalam pengembangan/sudah ada sistem informasi kabupaten sesuai dengan kebijakan Satu Data Indonesia, tetapi belum dapat diakses oleh publik",
+                skor: 1,
+              },
+              {
+                label:
+                  "Sudah ada sistem informasi kabupaten sesuai dengan kebijakan Satu Data Indonesia yang dapat diakses oleh publik",
+                skor: 2,
+              },
+            ],
+          },
+        ],
+      };
+function getUserData() {
+  return JSON.parse(localStorage.getItem("userData")) || {};
+}
+const userData = getUserData();
+const draft = JSON.parse(localStorage.getItem(`draft-${userData.nohp}`)) || {};
+Object.assign(jawabanUser, draft.jawaban || {});
+
+      function tampilkanSoal(kategori, btn) {
+        // Atur tombol kategori aktif
+        document
+          .querySelectorAll(".kategori-buttons button")
+          .forEach((b) => b.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+
+        const container = document.getElementById("soalContainer");
+        container.innerHTML = "";
+
+        // Tampilkan semua soal dalam kategori
+        soalData[kategori].forEach((soal, index) => {
+          const div = document.createElement("div");
+          div.className = "mb-4";
+
+          let opsiHTML = soal.opsi
+            .map((opsi, i) => {
+              const radioId = `opsi-${soal.id}-${i}`;
+              return `
+          <input type="radio" class="btn-check"
+            name="soal-${soal.id}"
+            id="${radioId}"
+            value="${opsi.skor}"
+            onchange="jawab('${soal.id}', ${opsi.skor})">
+          <label class="btn btn-outline-success custom-option" for="${radioId}">
+            ${opsi.label}
+          </label>
+        `;
+            })
+            .join("");
+
+          div.innerHTML = `
+        <p><strong>${index + 1}. ${soal.pertanyaan}</strong></p>
+        <div class="custom-radio-group">
+          ${opsiHTML}
+        </div>
+      `;
+
+  if (jawabanUser[soal.id] !== undefined) {
+    const radio = div.querySelector(`input[name="soal-${soal.id}"][value="${jawabanUser[soal.id]}"]`);
+    if (radio) radio.checked = true;
+  }
+          container.appendChild(div);
+
+        });
+        // input upload dokumen
+        const uploadBox = document.createElement("div");
+        uploadBox.className = "mb-4";
+        uploadBox.innerHTML = `
+          <label for="dokumen" class="form-label">Unggah Dokumen Pendukung (Opsional)</label>
+          <input type="file" class="form-control" id="dokumen" accept=".pdf,.doc,.docx,.jpg,.png" />
+          <small class="text-muted fst-italic">* Jika tersedia, mohon unggah dokumen yang mendukung jawaban Anda</small>
+        `;
+        container.appendChild(uploadBox);
+
+        // === Tombol SIMPAN & LANJUT ===
+        const btnSimpan = document.createElement("button");
+        btnSimpan.className = "btn btn-outline-success rounded-pill px-4";
+        btnSimpan.textContent = "Simpan";
+        btnSimpan.onclick = () => {
+  const userData = getUserData();
+  if (!userData.nohp) {
+    alert("Gagal menyimpan: data user tidak ditemukan.");
+    return;
+  }
+
+  let totalSkor = 0;
+  for (const skor of Object.values(jawabanUser)) {
+    totalSkor += skor;
+  }
+
+  const hasilDraft = {
+    ...userData,
+    jawaban: jawabanUser,
+    skor: totalSkor,
+    isDraft: true,
+    timestamp: new Date().toISOString(),
+  };
+
+  // Simpan draft ke localStorage
+  localStorage.setItem(`draft-${userData.nohp}`, JSON.stringify(hasilDraft));
+
+  // Simpan draft ke Firebase
+  firebaseService
+    .simpanBagianData(userData.nohp, "formWajib", hasilDraft)
+    .then(() => {
+      alert("✅ Draft berhasil disimpan ke Firebase.");
+    })
+    .catch((error) => {
+      console.error("Gagal simpan draft:", error);
+      alert("❌ Gagal menyimpan draft ke Firebase.");
+    });
+};
+  
+        const btnLanjut = document.createElement("button");
+        btnLanjut.className = "btn btn-warning text-white rounded-pill px-4";
+        btnLanjut.textContent = "Selanjutnya";
+        btnLanjut.onclick = () => {
+          const userData = getUserData();
+          if (!userData.nohp) {
+            alert("Data user tidak ditemukan.");
+            return;
+          }
+
+          let totalSkor = 0;
+          for (const skor of Object.values(jawabanUser)) {
+            totalSkor += skor;
+          }
+
+          const hasil = {
+            ...userData,
+            jawaban: jawabanUser,
+            skor: totalSkor,
+            isDraft: false,
+            timestamp: new Date().toISOString(),
+          };
+
+          firebaseService
+            .simpanBagianData(userData.nohp, "formWajib", hasil)
+            .then(() => {
+              localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
+              console.log("✅ Data final berhasil dikirim ke Firebase.");
+              // lanjut ke halaman berikut
+              const keys = Object.keys(soalData);
+              const index = keys.indexOf(kategori);
+              const nextKategori = keys[index + 1];
+
+              if (nextKategori) {
+                const nextBtn = document.querySelector(
+                  `.kategori-buttons button[data-kategori="${nextKategori}"]`
+                );
+                tampilkanSoal(nextKategori, nextBtn);
+              } else {
+                window.location.href = "form-tambahan.html";
+              }
+            })
+            .catch((err) => {
+              console.error("❌ Gagal simpan data final:", err);
+              alert("Gagal menyimpan data final.");
+            });
+
+          localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
+          console.log("Jawaban disimpan otomatis sebelum lanjut");
+
+          const keys = Object.keys(soalData);
+          const index = keys.indexOf(kategori);
+          const nextKategori = keys[index + 1];
+
+          if (nextKategori) {
+            const nextBtn = document.querySelector(
+              `.kategori-buttons button[data-kategori="${nextKategori}"]`
+            );
+            tampilkanSoal(nextKategori, nextBtn);
+          } else {
+            window.location.href = "form-tambahan.html";
+          }
+        };
+
+        const btnKeluar = document.createElement("button");
+btnKeluar.className = "btn btn-danger rounded-pill px-4";
+btnKeluar.textContent = "Keluar";
+
+btnKeluar.onclick = () => {
+  const konfirmasi = confirm("Apakah Anda yakin ingin keluar tanpa melanjutkan pengisian?");
+  if (konfirmasi) {
+    window.location.href = "index.html"; // Ganti ke halaman sesuai alur kamu
+  }
+};
+
+
+        const infoDraft = document.createElement("div");
+        infoDraft.className = "text-muted mt-2";
+        infoDraft.innerHTML =
+          "<small>*Tombol ini menyimpan jawaban sebagai <strong>draft</strong></small>";
+
+        const tombolNavigasi = document.createElement("div");
+        tombolNavigasi.className = "mt-4";
+
+        const tombolAksi = document.createElement("div");
+        tombolAksi.className = "d-flex justify-content-end gap-3";
+        tombolAksi.appendChild(btnSimpan);
+        tombolAksi.appendChild(btnLanjut);
+        tombolAksi.appendChild(btnKeluar);
+        tombolNavigasi.appendChild(tombolAksi);
+        tombolNavigasi.appendChild(infoDraft);
+        container.appendChild(tombolNavigasi);
+      }
+
+      function jawab(id, skor) {
+        jawabanUser[id] = skor;
+        const userData = getUserData();
+        const draft = JSON.parse(localStorage.getItem(`draft-${userData.nohp}`)) || {};
+        draft.jawaban = { ...draft.jawaban, ...jawabanUser };
+        localStorage.setItem(`draft-${userData.nohp}`, JSON.stringify(draft));
+      }
+
+      function lanjutKategoriBerikutnya(currentKategori) {
+        const keys = Object.keys(soalData);
+        const index = keys.indexOf(currentKategori);
+        const nextKategori = keys[index + 1];
+        if (nextKategori) {
+          const nextBtn = document.querySelector(
+            `.sidebar button[onclick*="${nextKategori}"]`
+          );
+          tampilkanSoal(nextKategori, nextBtn);
+        } else {
+          alert("Sudah di kategori terakhir.");
+        }
+      }
+
+      window.onload = () => {
+  const tombolPertama = document.querySelector(".kategori-buttons button");
+  tampilkanSoal("pilar1", tombolPertama);
+
+  const userData = getUserData();
+  const draftKey = `draft-${userData.nohp}`;
+  const draft = localStorage.getItem(`draft-${userData.nohp}`);
+  if (draft) {
+    const parsed = JSON.parse(draft);
+    if (parsed && parsed.jawaban && typeof parsed.jawaban === 'object')
+ {
+      if (parsed.jawaban) {
+        Object.entries(parsed.jawaban).forEach(([id, skor]) => {
+          jawabanUser[id] = skor;
+
+          const input = document.querySelector(
+            `input[name="soal-${id}"][value="${skor}"]`
+          );
+          if (input) input.checked = true;
+        });
+        console.log("Draft dimuat ulang untuk:", userData.nohp);
+      }
+    } else {
+      localStorage.removeItem(draftKey);
+      console.log("User beda kabupaten. Draft lama dihapus.");
+    }
+  }
+};
+    </script>
+  </body>
+</html>
