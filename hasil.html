@@ -61,6 +61,13 @@
     </style>
   </head>
   <body>
+    <script>
+      const userData = JSON.parse(localStorage.getItem("userData")) || {};
+      if (!userData || !userData.nohp) {
+        alert("⚠️ Anda belum login. Silakan masuk terlebih dahulu.");
+        window.location.href = "index.html"; // halaman login
+      }
+    </script>
     <div class="container">
       <div class="card mx-auto" style="max-width: 800px">
         <h3 class="mb-4 text-center">Hasil Penilaian</h3>
@@ -132,6 +139,9 @@
       }
       let tambahanSkor = unggahDokumen ? 2 : 0;
       totalSkor += tambahanSkor;
+      console.log("Skor jawaban saja:", totalSkor - tambahanSkor);
+      console.log("Tambah poin karena unggah dokumen:", tambahanSkor);
+      console.log("Total skor final:", totalSkor);
 
       const maxSkor = 32; // sesuai ketentuan: maksimal 16 indikator x 2
       const persen = (totalSkor / maxSkor) * 100;
@@ -254,6 +264,7 @@
             persen: hasilSkor.persen || 0,
             kategori: hasilSkor.kategori || "",
             pilarSkor: hasilSkor.pilarSkor || {},
+            keterangan: keterangan,
             unggahDokumen: hasilTambahan.unggahDokumen === true,
           };
 

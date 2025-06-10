@@ -18,7 +18,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script src="firebase.js"></script>
-
+  <script src="firebase-upload.js"></script>
     <style>
       body {
         font-family: "Open Sans", sans-serif;
@@ -174,53 +174,53 @@
         pilar6: [
           {
             pertanyaan:
-              "Gugus Tugas Reforma Agraria beserta rencana kerja dan peta jalan:",
+              "Pembentukan Gugus Tugas Reforma Agraria (GTRA) beserta rencana kerja dan peta jalan  di tingkat Kabupaten:",
             id: "1",
             opsi: [
-              { label: "Gugus Tugas Reforma Agraria belum terbentuk", skor: 0 },
+              { label: "Gugus Tugas Reforma Agraria di tingkat Kabupaten belum terbentuk", skor: 0 },
               {
                 label:
-                  "Sudah terbentuk tapi belum ada rencana kerja dan peta jalan",
+                  "Gugus Tugas Reforma Agraria di tingkat Kabupaten sudah terbentuk, namun belum ada rencana kerja dan peta jalan",
                 skor: 1,
               },
               {
-                label: "Sudah terbentuk beserta rencana kerja dan peta jalan",
+                label: "Sudah terbentuk Gugus Tugas Reforma Agraria beserta rencana kerja dan peta jalan di tingkat Kabupaten",
                 skor: 2,
               },
             ],
           },
           {
-            pertanyaan: "Mekanisme penataan aset & akses Reforma Agraria:",
+            pertanyaan: "Mekanisme pelaksanaan penataan aset dan akses yang dilakukan GTRA dalam penetapan Tanah Objek Reforma Agraria; dan mekanisme pendukung pengusulan di tingkat Kabupaten:",
             id: "2",
             opsi: [
               {
                 label:
-                  "Belum ada mekanisme pelaksanaan penataan aset dan akese",
+                  "Belum ada mekanisme pelaksanaan penataan aset dan akses GTRA dalam penetapan TORA maupun mekanisme pendukung pengusulan di tingkat kabupaten",
                 skor: 0,
               },
               {
-                label: "Mekanisme masih dalam pengembangan/belum terlaksana",
+                label: "Mekanisme pelaksanaan penataan aset dan akses GTRA dalam penetapan TORA maupun mekanisme pendukung pengusulan di tingkat kabupaten masih dalam pengembangan, atau sudah ada namun belum berjalan",
                 skor: 1,
               },
-              { label: "Mekanisme sudah ada dan sudah terlaksana", skor: 2 },
+              { label: "Mekanisme pelaksanaan penataan aset dan akses GTRA dalam penetapan TORA maupun mekanisme pendukung pengusulan di tingkat Kabupaten sudah ada dan terlaksana dengan baik", skor: 2 },
             ],
           },
         ],
         pilar7: [
           {
-            pertanyaan: "Penyelesaian kasus SDA & proses harmonisasi PIAPS",
+            pertanyaan: "Penyelesaian pemberkasan kasus hukum terkait pengendalian kerusakan SDA dan proses konsultasi dalam harmonisasi Peta Indikatif dan Areal Perhutanan Sosial (PIAPS):",
             id: "3",
             opsi: [
               {
-                label: "Tidak ada target atau kelembagaan penanganan kasus SDA",
+                label: "Belum ada target penyelesaian kasus kerusakan SDA; proses konsultasi dalam harmonisasi PIAPS belum berjalan",
                 skor: 0,
               },
               {
-                label: "Sudah ada proses atau target tapi belum tercapai",
+                label: "Target penyelesaian kasus kerusakan SDA sudah ditetapkan, namun belum tercapai. Proses konsultasi dalam harmonisasi PIAPS belum berjalan",
                 skor: 1,
               },
               {
-                label: "Target penyelesaian dan proses PIAPS sudah tercapai",
+                label: "Target penyelesaian kasus kerusakan SDA sudah tercapai. Proses konsultasi dalam harmonisasi PIAPS berjalan dengan baik dan melibatkan masyarakat secara aktif",
                 skor: 2,
               },
             ],
@@ -229,45 +229,45 @@
         pilar8: [
           {
             pertanyaan:
-              "Realisasi penanaman komoditas strategis dengan fungsi ekologis",
+              "Realisasi target penanaman komoditas strategis kabupaten dengan mempertimbangkan fungsi ekologis penting:",
             id: "4",
             opsi: [
               {
                 label:
-                  "Tidak ada target atau realisasi penanaman komoditas strategis",
+                  "Belum ada target realisasi penanaman komoditas strategis kabupaten dengan mempertimbangkan fungsi ekologis penting",
                 skor: 0,
               },
-              { label: "Realisasi sebagian, masih dalam proses", skor: 1 },
+              { label: "Target realisasi penanaman komoditas strategis kabupaten dengan mempertimbangkan fungsi ekologis penting sudah ditetapkan, tetapi masih belum tercapai", skor: 1 },
               {
-                label: "Realisasi sudah tercapai sesuai fungsi ekologis",
+                label: "Target realisasi penanaman komoditas strategis kabupaten dengan mempertimbangkan fungsi ekologis penting sudah tercapai",
                 skor: 2,
               },
             ],
           },
           {
-            pertanyaan: "Persentase PDRB Hijau terhadap PDRB:",
+            pertanyaan: "Peningkatan persentase PDRB Hijau dibandingkan PDRB:",
             id: "5",
             opsi: [
-              { label: "Belum ada perhitungan PDRB Hijau", skor: 0 },
-              { label: "Sudah ada perhitungan, tapi belum meningkat", skor: 1 },
+              { label: "Belum ada perhitungan PDRB Hijau di Kabupaten", skor: 0 },
+              { label: "Kabupaten sudah memiliki perhitungan PDRB Hijau lengkap dengan nilai aset lingkungan lokal, tetapi persentasenya sangat kecil dibandingkan PDRB", skor: 1 },
               {
                 label:
-                  "Sudah dihitung dan persentasenya meningkat dari tahun sebelumnya",
+                  "Kabupaten sudah memiliki perhitungan PDRB Hijau lengkap dengan nilai aset lingkungan lokal, dengan persentase PDRB Hijau mendekati PDRB dan/atau meningkat dari tahun sebelumnya",
                 skor: 2,
               },
             ],
           },
           {
-            pertanyaan: "Produksi HHBK sesuai praktik berkelanjutan",
+            pertanyaan: "Pencapaian target produksi subsektor kehutanan khusus Hasil Hutan Bukan Kayu (HHBK) yang sesuai dengan praktek berkelanjutan:",
             id: "6",
             opsi: [
-              { label: "Tidak ada target atau data produksi HHBK", skor: 0 },
+              { label: "Belum ada target produksi HHBK yang sesuai dengan praktek berkelanjutan", skor: 0 },
               {
-                label: "Ada target, masih dalam proses atau belum tercapai",
+                label: "Target produksi HHBK yang sesuai dengan praktek berkelanjutan sudah ditetapkan, namun belum tercapai",
                 skor: 1,
               },
               {
-                label: "Produksi sesuai target dan praktek berkelanjutan",
+                label: "Target produksi HHBK yang sesuai dengan praktek berkelanjutan sudah tercapai",
                 skor: 2,
               },
             ],
@@ -276,32 +276,40 @@
         pilar9: [
           {
             pertanyaan:
-              "Pemerataan sarana dan prasarana publik (khususnya desa):",
+              "Pencapaian target pemerataan ketersediaan sarana dan prasarana publik; khususnya di tingkat desa:",
             id: "7",
             opsi: [
               {
-                label: "Tidak ada target atau data sebaran prasarana",
+                label: "Belum ada target pemerataan ketersediaan sarana dan prasarana publik",
                 skor: 0,
               },
-              { label: "Data atau target sebagian, belum tercapai", skor: 1 },
+              { label: "Target pemerataan ketersediaan sarana dan prasarana publik sudah ditetapkan, namun belum tercapai", skor: 1 },
               {
-                label: "Target tercapai, data lengkap dan dianalisis",
+                label: "Target pemerataan ketersediaan sarana dan prasarana publik sudah tercapai",
                 skor: 2,
               },
             ],
           },
           {
-            pertanyaan: "Mekanisme pemantauan kualitas air dan udara:",
+            pertanyaan: "Pelaksanaan mekanisme pemantauan dan pengendalian kualitas air dan udara di wilayah Kabupaten:",
             id: "8",
             opsi: [
-              { label: "Belum ada mekanisme atau kelembagaan", skor: 0 },
-              { label: "Mekanisme masih dalam pengembangan", skor: 1 },
-              { label: "Mekanisem sudah berjalan dan terdokumentasi", skor: 2 },
+              { label: "Belum ada mekanisme pemantauan dan pengendalian kualitas air dan udara di wilayah Kabupaten", skor: 0 },
+              { label: "Mekanisme pemantauan dan pengendalian kualitas air dan udara di wilayah Kabupaten masih dalam pengembangan, atau sudah ada namun belum terlaksana", skor: 1 },
+              { label: "Mekanisme pemantauan dan pengendalian kualitas air dan udara di wilayah  ada dan dilaksanakan dengan konsisten", skor: 2 },
             ],
           },
         ],
       };
       const jawabanUser = {};
+      const dokumenPerKategori = {};
+      const judulKategori = {
+  pilar6: "Inovasi Kebijakan dan Perencanaan",
+  pilar7: "Tata Kelola Multipihak",
+  pilar8: "Ko-Kreasi Bisnis & Investasi",
+  pilar9: "Pengukuran Proses"
+};
+
       let kategoriAktif ="pilar6";
        function tampilkanSoal(kategori, btn = null) {
     kategoriAktif = kategori;
@@ -328,20 +336,44 @@
         .join("");
 
       div.innerHTML = `
-        <p><strong>${index + 1}. ${soal.pertanyaan}</strong></p>
-        <div class="custom-radio-group">${opsiHTML}</div>
-      `;
+  <p><strong>${index + 1}. ${soal.pertanyaan}</strong></p>
+  <div class="custom-radio-group mb-2">${opsiHTML}</div>
+`;
       container.appendChild(div);
     });
-// input upload dokumen
-const uploadBox = document.createElement("div");
-uploadBox.className = "mb-4";
-uploadBox.innerHTML = `
-  <label for="dokumen" class="form-label">Unggah Dokumen Pendukung (Opsional)</label>
-  <input type="file" class="form-control" id="dokumen" accept=".pdf,.doc,.docx,.jpg,.png" />
-  <small class="text-muted fst-italic">* Jika tersedia, mohon unggah dokumen yang mendukung jawaban Anda</small>
-`;
-container.appendChild(uploadBox);
+
+    const uploadBox = document.createElement("div");
+    uploadBox.className = "mb-4";
+    uploadBox.innerHTML = `
+      <label class="form-label">Unggah Dokumen Pendukung (Opsional)</label>
+      <div class="upload-group">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <input type="file" class="form-control" name="dokumen[]" accept=".pdf,.doc,.docx,.jpg,.png" />
+          <button type="button" class="btn btn-sm btn-success tambah-file-btn" data-kategori="${kategori}">+</button>
+        </div>
+        <div id="info-dokumen-terupload" class="text-muted small"></div>
+      </div>
+      <small class="text-muted fst-italic">* Maksimal 5 file. Dokumen ini mendukung jawaban Anda (jika ada)</small>
+    `;
+    container.appendChild(uploadBox);
+
+
+        const namaKategori = judulKategori[kategori] || kategori;
+        const infoBox = document.getElementById("info-dokumen-terupload");
+
+        if (dokumenPerKategori[namaKategori]) {
+          const namaFile = dokumenPerKategori[namaKategori].fileName;
+          infoBox.innerHTML = `📄 Sudah upload: <em>${namaFile}</em>`;
+        }
+
+// Ambil data user
+const userData = JSON.parse(localStorage.getItem("userData")) || {};
+
+// Proteksi login, langsung cek saat halaman dibuka
+if (!userData.nohp) {
+  alert("⚠️ Anda belum login. Silakan masuk terlebih dahulu.");
+  window.location.href = "index.html"; // ganti dengan halaman login kamu
+}
 
     // Navigasi
     const nav = document.createElement("div");
@@ -350,66 +382,154 @@ container.appendChild(uploadBox);
     const btnSimpan = document.createElement("button");
     btnSimpan.className = "btn btn-outline-success rounded-pill px-4";
     btnSimpan.textContent = "Simpan";
-   btnSimpan.onclick = async () => {
-  const userData = JSON.parse(localStorage.getItem("userData")) || {};
-  if (!userData.nohp) {
-    alert("Data user tidak ditemukan.");
-    return;
-  }
-
-  // Ambil semua jawaban dari jawabanUser
-  const jawaban = { ...jawabanUser };
-
-  const fileInput = document.getElementById("dokumen");
-  const file = fileInput?.files[0];
-  const unggahDokumen = !!file;
-
+    btnSimpan.onclick = async () => {
   try {
-    const dataTambahan = {
-      jawaban,
-      isDraft: false,
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    if (!userData.nohp) {
+      alert("Data user tidak ditemukan.");
+      return;
+    }
+
+    const uploadGroup = document.querySelector(".upload-group");
+    const fileInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+
+    let unggahDokumen = false;
+    let hasilUpload = [];
+
+    for (const input of fileInputs) {
+      const file = input.files[0];
+      if (file) {
+        const fileURL = await uploadDokumenKeServer(file);
+        hasilUpload.push({
+          fileName: file.name,
+          fileURL,
+        });
+        unggahDokumen = true;
+      }
+    }
+
+    if (unggahDokumen) {
+      const namaKategori = judulKategori[kategoriAktif];
+      dokumenPerKategori[namaKategori] = hasilUpload;
+      tampilkanDaftarUpload(namaKategori);
+    }
+
+    // Simpan ke localStorage
+    const existingDraft = JSON.parse(localStorage.getItem(`draft-tambahan-${userData.nohp}`)) || {};
+    const jawabanLama = existingDraft.jawaban || {};
+
+    const hasil = {
+      ...userData,
+      jawaban: { ...jawabanLama, ...jawabanUser },
       timestamp: new Date().toISOString(),
-      unggahDokumen
+      unggahDokumen,
+      dokumen: dokumenPerKategori,
     };
 
-    await firebaseService.simpanBagianData(userData.nohp, "formTambahan", dataTambahan);
-    alert("✅ Data tambahan berhasil disimpan!");
-  } catch (error) {
-    console.error("❌ Gagal menyimpan:", error);
-    alert("Terjadi kesalahan saat menyimpan data.");
+    localStorage.setItem(`draft-tambahan-${userData.nohp}`, JSON.stringify(hasil));
+
+    // Simpan ke Firebase
+    await firebaseService.simpanBagianData(userData.nohp, "formTambahan", {
+      ...hasil,
+      isDraft: true,
+    });
+
+    alert("✅ Draft berhasil disimpan ke Firebase.");
+
+    console.log("✅ Draft tersimpan saat klik lanjut.");
+
+    // Lanjut ke kategori berikut
+    const keys = Object.keys(soalData);
+    const index = keys.indexOf(kategoriAktif);
+    const nextKategori = keys[index + 1];
+
+    if (nextKategori) {
+      const nextBtn = document.querySelector(`.kategori-buttons button[data-kategori="${nextKategori}"]`);
+      tampilkanSoal(nextKategori, nextBtn);
+    } else {
+      window.location.href = "consent.html";
+    }
+
+  } catch (err) {
+    console.error("❌ Gagal simpan draft saat lanjut:", err);
+    alert("Terjadi kesalahan saat simpan dokumen.");
+    return;
   }
 };
-
 
     const btnLanjut = document.createElement("button");
     btnLanjut.className = "btn btn-warning text-white rounded-pill px-4";
     btnLanjut.textContent = "Selanjutnya";
     btnLanjut.onclick = async () => {
-  simpanJawaban(); // tetap simpan ke localStorage
-
-  const userData = JSON.parse(localStorage.getItem("userData")) || {};
-  const draft = JSON.parse(localStorage.getItem(`draft-tambahan-${userData.nohp}`)) || {};
-
   try {
-    // Simpan ke Firebase sebagai draft
+    const userData = JSON.parse(localStorage.getItem("userData")) || {};
+    if (!userData.nohp) {
+      alert("Data user tidak ditemukan.");
+      return;
+    }
+
+    const uploadGroup = document.querySelector(".upload-group");
+    const fileInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+
+    let unggahDokumen = false;
+    let hasilUpload = [];
+
+    for (const input of fileInputs) {
+      const file = input.files[0];
+      if (file) {
+        const fileURL = await uploadDokumenKeServer(file);
+        hasilUpload.push({
+          fileName: file.name,
+          fileURL,
+        });
+        unggahDokumen = true;
+      }
+    }
+
+    if (unggahDokumen) {
+      const namaKategori = judulKategori[kategoriAktif];
+      dokumenPerKategori[namaKategori] = hasilUpload;
+      tampilkanDaftarUpload(namaKategori);
+    }
+
+    // Simpan ke localStorage
+    const existingDraft = JSON.parse(localStorage.getItem(`draft-tambahan-${userData.nohp}`)) || {};
+    const jawabanLama = existingDraft.jawaban || {};
+
+    const hasil = {
+      ...userData,
+      jawaban: { ...jawabanLama, ...jawabanUser },
+      timestamp: new Date().toISOString(),
+      unggahDokumen,
+      dokumen: dokumenPerKategori,
+    };
+
+    localStorage.setItem(`draft-tambahan-${userData.nohp}`, JSON.stringify(hasil));
+
+    // Simpan ke Firebase
     await firebaseService.simpanBagianData(userData.nohp, "formTambahan", {
-      ...draft,
+      ...hasil,
       isDraft: true,
     });
+
     console.log("✅ Draft tersimpan saat klik lanjut.");
+    
+    // Lanjut ke kategori berikut
+    const keys = Object.keys(soalData);
+    const index = keys.indexOf(kategoriAktif);
+    const nextKategori = keys[index + 1];
+
+    if (nextKategori) {
+      const nextBtn = document.querySelector(`.kategori-buttons button[data-kategori="${nextKategori}"]`);
+      tampilkanSoal(nextKategori, nextBtn);
+    } else {
+      window.location.href = "consent.html";
+    }
+    
   } catch (err) {
     console.error("❌ Gagal simpan draft saat lanjut:", err);
-  }
-
-  const keys = Object.keys(soalData);
-  const index = keys.indexOf(kategoriAktif);
-  const nextKategori = keys[index + 1];
-
-  if (nextKategori) {
-    const nextBtn = document.querySelector(`.kategori-buttons button[data-kategori="${nextKategori}"]`);
-    tampilkanSoal(nextKategori, nextBtn);
-  } else {
-    window.location.href = "consent.html";
+    alert("Terjadi kesalahan saat simpan dokumen.");
+    return;
   }
 };
 
@@ -489,9 +609,41 @@ draftKeys.forEach(key => {
   }
 });
 
+document.addEventListener("click", function (e) {
+  if (e.target && e.target.classList.contains("tambah-file-btn")) {
+    const uploadGroup = e.target.closest(".upload-group");
+    if (!uploadGroup) return;
+
+    const existingInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+    if (existingInputs.length >= 5) {
+      alert("⚠️ Maksimal hanya boleh unggah 5 dokumen.");
+      return;
+    }
+
+    const newInput = document.createElement("div");
+    newInput.className = "mt-2";
+    newInput.innerHTML = `
+      <input type="file" class="form-control" name="dokumen[]" accept=".pdf,.doc,.docx,.jpg,.png" />
+    `;
+
+    const infoBox = uploadGroup.querySelector("#info-dokumen-terupload");
+    uploadGroup.insertBefore(newInput, infoBox);
+  }
+});
+
+function tampilkanDaftarUpload(namaKategori) {
+  const infoBox = document.getElementById("info-dokumen-terupload");
+  if (!infoBox) return;
+
+  const daftar = (dokumenPerKategori[namaKategori] || [])
+    .map(file => `📄 <em>${file.fileName}</em>`)
+    .join("<br>");
+  infoBox.innerHTML = daftar ? `Sudah upload:<br>${daftar}` : "";
+}
+
   window.onload = () => {
   // Reset jawabanUser saat halaman di-load
-  Object.keys(jawabanUser).forEach((k) => delete jawabanUser[k]);
+  //Object.keys(jawabanUser).forEach((k) => delete jawabanUser[k]);
 
   const userData = JSON.parse(localStorage.getItem("userData")) || {};
   const draft = localStorage.getItem(`draft-tambahan-${userData.nohp}`);

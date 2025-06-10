@@ -36,6 +36,13 @@
     </style>
   </head>
   <body>
+    <script>
+      const userData = JSON.parse(localStorage.getItem("userData")) || {};
+      if (!userData || !userData.nohp) {
+        alert("⚠️ Anda belum login. Silakan masuk terlebih dahulu.");
+        window.location.href = "index.html"; // halaman login
+      }
+    </script>
     <div class="container">
       <div class="card mx-auto" style="max-width: 600px">
         <h3 class="mb-4">Persetujuan Pengisian</h3>
@@ -69,11 +76,6 @@
     </div>
 
     <script>
-      // supabaseClient.js
-      const SUPABASE_URL = "https://xxxx.supabase.co";
-      const SUPABASE_KEY = "your-public-anon-key";
-      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
       function toggleButton() {
         const checkbox = document.getElementById("setujuCheckbox");
         const button = document.getElementById("lanjutButton");

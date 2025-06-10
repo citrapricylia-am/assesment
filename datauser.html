@@ -112,6 +112,10 @@
             alert("Semua kolom wajib diisi!");
             return;
           }
+          if (!/^08\d{8,}$/.test(nohp)) {
+            alert("Nomor HP harus dimulai dengan 08 dan minimal 10 digit.");
+            return;
+          }
 
           const userRef = firebase.database().ref("dataUser");
 

@@ -17,8 +17,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script src="firebase.js"></script>
-
-
+  <script src="firebase-upload.js"></script>
 
     <style>
       body {
@@ -169,64 +168,72 @@
 </div>
 
     <script>
-      const jawabanUser = {}; // harus ada di luar semua fungsi
+      const jawabanUser = {};
+      const dokumenPerKategori = {};
+      const judulKategori = {
+  pilar1: "Inovasi Kebijakan dan Perencanaan",
+  pilar2: "Tata Kelola Multipihak",
+  pilar3: "Ko-Kreasi Bisnis & Investasi",
+  pilar4: "Pengukuran Progress",
+  pilar5: "Amplifikasi Narasi",
+};
       const soalData = {
         pilar1: [
           {
             id: "1",
             pertanyaan:
-              "Kepatuhan penyusunan RPJMD berdasarkkan KLHS & DDDTLH:",
+              "Kepatuhan penyusunan RPJMD/RPJPD Kabupaten berdasarkan Kajian Lingkungan Hidup Strategis (KLHS):",
             opsi: [
               {
-                label: "Tidak ada dokumen KLHS; tidak ada analisis DDDTLH",
+                label: "Belum ada KLHS, atau ada KLHS tetapi tidak berkaitan dengan RPJMD/RPJPD",
                 skor: 0,
               },
               {
                 label:
-                  "KLHS tersedia tapi belum digunakan dalam RPJMD; sebagian analisis DDDTLH ada",
+                  "Sudah ada KLHS, tetapi belum terintegrasi dengan RPJMD/RPJPD. Atau, ada KLHS tetapi tidak mencakup DDDT-LH",
                 skor: 1,
               },
               {
                 label:
-                  "KLHS dan sebagian besar analisis DDDTLH digunakan sebagai dasar RPJMD",
+                  "KLHS sudah tersedia dengan data DDDT-LH yang lengkap, dan sudah terintegrasi dalam RPJMD/RPJPD",
                 skor: 2,
               },
             ],
           },
           {
             id: "2",
-            pertanyaan: "Stabilitas keberadaan lahan penyedia pangan:",
+            pertanyaan: "Stabilitas keberadaan lahan penyedia pangan sesuai kebutuhan kabupaten:",
             opsi: [
               {
-                label: "Tidak ada data atau target yang terdokumentasi",
+                label: "Tidak ada target penyediaan lahan penyedia pangan yang ditetapkan sesuai data kebutuhan pangan daerah",
                 skor: 0,
               },
               {
                 label:
-                  "Ada data lahan pangan tapi belum ada target atau belum konsisten",
+                  "Target stabilitas keberadaan lahan pangan sudah ada dan ditetapkan, namun belum tercapai",
                 skor: 1,
               },
               {
                 label:
-                  "Target lahan pangan dan data realisasi tersedia dan sinkron",
+                  "Target stabilitas keberadaan lahan penyedia pangan sudah tercapai, sesuai dengan data kebutuhan pangan daerah",
                 skor: 2,
               },
             ],
           },
           {
             id: "3",
-            pertanyaan: "Kebijakan dan/atau rencana ekonomi sesuai SDG:",
+            pertanyaan: "Kebijakan dan/atau rencana ekonomi sesuai Target Pembangunan Berkelanjutan di tingkat kabupaten:",
             opsi: [
               {
-                label: "Tidak ada RAD atau dokuemn pembangunan lestari",
+                label: "Belum ada dokumen kebijakan dan atau rencana yang sesuai dengan aspek SDG/lestari",
                 skor: 0,
               },
               {
-                label: "Ada draft atau dokumen sebagian, belum implementatif",
+                label: "Sedang dalam proses penyusunan dokumen kebijakan dan/atau rencana yang sesuai dengan aspek SDG/lestari",
                 skor: 1,
               },
               {
-                label: "Dokumen tersedia, mencakup stakeholder & anggaran",
+                label: "Kabupaten sudah memiliki dokumen rencana yang sesuai dengan aspek SDG/lestari, dengan pemangku kepentingan kunci di kabupaten teridentifikasi",
                 skor: 2,
               },
             ],
@@ -235,33 +242,33 @@
             id: "4",
             pertanyaan: "Penurunan angka pengangguran:",
             opsi: [
-              { label: "Tidak ada target atau data pengangguran", skor: 0 },
+              { label: "Belum ada target penurunan angka pengangguran di tingkat kabupaten", skor: 0 },
               {
-                label: "Ada target atau data, belum konsisten antar tahun",
+                label: "Target penurunan angka pengangguran di tingkat kabupaten sudah ada, tetapi belum tercapai",
                 skor: 1,
               },
               {
-                label: "Target dan data pengangguran tersedia dan dianalisis",
+                label: "Target penurunan angka pengangguran di tingkat kabupaten sudah tercapai dan sesuai dengan target yang ditetapkan",
                 skor: 2,
               },
             ],
           },
           {
             id: "5",
-            pertanyaan: "Peningkatan ekonomi dari sektor unggulan kabupaten:",
+            pertanyaan: "Peningkatan ekonomi dari sektor unggulan Kabupaten:",
             opsi: [
               {
-                label: "Tidak ada data atau sektor prioritas tidak jelas",
+                label: "Tidak ada target peningkatan ekonomi dari sektor unggulan Kabupaten",
                 skor: 0,
               },
               {
                 label:
-                  "Sektor sudah diidentifikasi tapi belum ada nilai kontribusinya",
+                  "Target peningkatan ekonomi dari sektor unggulan Kabupaten sudah ada, tetapi belum tercapai",
                 skor: 1,
               },
               {
                 label:
-                  "Data kontribusi PDRB sektor unggulan tersedia dan stabil",
+                  "Target peningkatan ekonomi dari sektor unggulan Kabupaten sudah tercapai",
                 skor: 2,
               },
             ],
@@ -271,16 +278,16 @@
             pertanyaan: "Penurunan penduduk miskin dan ketimpangan ekonomi:",
             opsi: [
               {
-                label: "Tidak ada data kemiskinan atau rencana penanggulangan",
+                label: "Tidak ada target penurunan penduduk miskin dan ketimpangan ekonomi yang ditetapkan berdasarkan data penduduk miskin dan indeks rasio gini. Tidak ada tim/gugus tugas khusus yang fokus pada target penurunan kemiskinan",
                 skor: 0,
               },
               {
                 label:
-                  "Data tersedia tapi belum ada target penurunan atau tim khusus",
+                  "Target penurunan penduduk miskin dan ketimpangan ekonomi di tingkat kabupaten sudah ada, tetapi belum tercapai. Tidak ada tim/gugus tugas khusus yang fokus pada target penurunan kemiskinan",
                 skor: 1,
               },
               {
-                label: "Data lengkap + target jelas + gugus tugas aktif",
+                label: "Target penurunan penduduk miskin dan ketimpangan ekonomi di tingkat kabupaten sudah tercapai sesuai dengan target yang ditetapkan. Sudah ada tim/gugus tugas khusus yang fokus pada target penurunan kemiskinan",
                 skor: 2,
               },
             ],
@@ -288,20 +295,20 @@
           {
             id: "7",
             pertanyaan:
-              "Forum kelembagaan multipihak dalam perencanaan pembangunan:",
+              "Pengakuan dan perlindungan masyarakat hukum adat melalui produk hukum dan dokumen perencanaan Kabupaten (RPJMD/Perda/SK Bupati):",
             opsi: [
               {
-                label: "Tidak ada forum atau dokumentasi aktivitas multipihak",
+                label: "Belum ada bentuk pengakuan dan perlindungan masyarakat adat melalui produk hukum atau dokumen perencanaan di kabupaten.",
                 skor: 0,
               },
               {
                 label:
-                  "Forum ada tapi belum aktif atau belum terintegrasi dalam kebijakan",
+                  "Sudah ada pengakuan dan perlindungan masyarakat adat di Kabupaten, tetapi belum dalam bentuk dilegalkan sebagai produk hukum atau dokumen perencanaan.",
                 skor: 1,
               },
               {
                 label:
-                  "Forum aktif + diakui secara resmi + ada output kebijakan",
+                  "Sudah ada bentuk pengakuan dan perlindungan masyarakat adat dalam bentuk produk hukum atau dokumen perencanaan di kabupaten",
                 skor: 2,
               },
             ],
@@ -311,60 +318,60 @@
           {
             id: "8",
             pertanyaan:
-              "Forum kelembagaan multipihak dalam perencanaan pembangunan:",
+              "Peta tata batas desa dan/atau wilayah kelola bersama yang dilakukan melalui metode pemetaan partisipatif dengan keterlibatan masyarakat dan/atau masyarakat hukum adat:",
             opsi: [
               {
-                label: "Tidak ada forum atau dokumentasi aktivitas multipihak",
+                label: "Belum ada peta tata batas desa dan/atau wilayah kelola bersama.",
                 skor: 0,
               },
               {
                 label:
-                  "Forum ada tapi belum aktif atau belum terintegrasi dalam kebijakan",
+                  "Sudah ada peta tata batas desa dan/atau wilayah tata kelola bersama, tetapi tidak melalui metode pemetaan partisipatif dan tanpa keterlibatan masyarakat lokal/hukum adat",
                 skor: 1,
               },
               {
                 label:
-                  "Forum aktif + diakui secara resmi + ada output kebijakan",
+                  "Sudah ada peta tata batas desa dan/atau wilayah kelola bersama yang disusun melalui metode pemetaan partisipatif dengan keterlibatan masyarakat dan/atau masyarakat hukum adat",
                 skor: 2,
               },
             ],
           },
           {
             id: "9",
-            pertanyaan: "Basis data masyarakat hukum adat:",
+            pertanyaan: "Forum Kelembagaan Multipihak yang terlibat dalam proses perencanaan pembangunan daerah:",
             opsi: [
               {
-                label: "Tidak ada basis data atau proses identifikasi",
+                label: "Belum ada Forum Kelembagaan Multipihak yang terlibat dalam proses perencanaan pembangunan daerah",
                 skor: 0,
               },
               {
-                label: "Data parsial atau belum terverifikasi secara formal",
+                label: "Forum Kelembagaan Multipihak sedang dalam proses pembentukan, atau sudah ada namun belum melibatkan seluruh pemangku kepentingan kunci",
                 skor: 1,
               },
               {
                 label:
-                  "Basis data lengkap + terverfikasi + digunakan dalam perencanaan",
+                  "Sudah ada Forum Kelembagaan Multipihak yang terlibat dalam proses perencanaan pembangunan daerah",
                 skor: 2,
               },
             ],
           },
           {
             id: "10",
-            pertanyaan: "Target awal PDRB tahunan:",
+            pertanyaan: "Basis data masyarakat hukum adat di wilayah Kabupaten, yang teridentifikasi melalui proses partisipatif:",
             opsi: [
               {
                 label:
-                  "Tidak ada data atau tidak ada target yang terdokumentasi",
+                  "Belum ada basis data masyarakat hukum adat di wilayah Kabupaten",
                 skor: 0,
               },
               {
                 label:
-                  "Target ada tapi tidak konsisten digunakan atau dianalisis",
+                  "Basis data masyarakat hukum adat di wilayah kabupaten sedang dalam pengembangan, atau sudah ada namun tidak melalui proses partisipatif",
                 skor: 1,
               },
               {
                 label:
-                  "Target dan realisasi tersedia tiap tahun + digunakan dalam evaluasi",
+                  "Sudah ada basis data masyarakat hukum adat di wilayah Kabupaten, yang disusun melalui proses partisipatif",
                 skor: 2,
               },
             ],
@@ -373,39 +380,39 @@
         pilar3: [
           {
             id: "11",
-            pertanyaan: "Pendapatan perkapita daerah:",
+            pertanyaan: "Pencapaian PDRB yang merefleksikan pertumbuhan ekonomi daerah:",
             opsi: [
               {
                 label:
-                  "Tidak tersedia data atau tidak dihitung ditingkat kabupaten",
+                  "Belum ada target PDRB yang merefleksikan pertumbuhan ekonomi daerah",
                 skor: 0,
               },
               {
-                label: "Data tersedia tapi tidak dianalisis atau dipakai",
+                label: "Target PDRB kabupaten sudah ditetapkan, namun belum tercapai",
                 skor: 1,
               },
               {
                 label:
-                  "Data tersedia + digunakan sebagai indikator utama dalam perencanaan",
+                  "Target PDRB yang merefleksikan pertumbuhan ekonomi daerah sudah tercapai",
                 skor: 2,
               },
             ],
           },
           {
             id: "12",
-            pertanyaan: "Produktivitas & produksi komoditas strategis:",
+            pertanyaan: "Pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah:",
             opsi: [
               {
-                label: "Tidak ada data atau daftar komoditas strategis",
+                label: "Belum ada target pendapatan perkapita yang merefleksikan pertumbuhan ekonomi daerah",
                 skor: 0,
               },
               {
-                label: "Data ada tapi belum lengkap atau belum diupdate",
+                label: "Target pendapatan perkapita kabupaten sudah ditetapkan, namun belum tercapai",
                 skor: 1,
               },
               {
                 label:
-                  "Data lengkap, tahunan, dan digunakan untuk perencanaan ekonomi",
+                  "Target pendapatan perkapita yang merefleksikan pertumbuhan ekonomi daerah sudah tercapai",
                 skor: 2,
               },
             ],
@@ -413,35 +420,35 @@
           {
             id: "13",
             pertanyaan:
-              "Target produksi pangan utama nasional (padi, jagung, kedelai):",
+              "Tingkat produktivitas rata-rata dan produksi komoditas strategis kabupaten:",
             opsi: [
-              { label: "Tidak ada target atau data aktual produksi", skor: 0 },
+              { label: "Belum ada target produktivitas rata-rata dan produksi komoditas strategis kabupaten", skor: 0 },
               {
                 label:
-                  "Target tersedia, tapi belum diselaraskan atau dievaluasi",
+                  "Target produktivitas rata-rata dan produksi komoditas strategis kabupaten sudah ditetapkan, tetapi belum tercapai",
                 skor: 1,
               },
               {
-                label: "Target dan realisasi tahunan tersedia dan dilaporkan",
+                label: "Target produktivitas rata-rata dan produksi komoditas strategis kabupaten sudah tercapai",
                 skor: 2,
               },
             ],
           },
           {
             id: "14",
-            pertanyaan: "Tercapainya target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah:",
+            pertanyaan: "Capaian target produksi tanaman pangan utama nasional (padi, jagung, kedelai) di wilayah kabupaten:",
             opsi: [
               {
-                label: "Tidak ada target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah",
+                label: "Belum ada target produksi tanaman pangan utama nasional di wilayah kabupaten",
                 skor: 0,
               },
               {
-                label: "Target pendapatan perkapita di kabupaten belum tercapai, masih dalam proses",
+                label: "Target produksi tanaman pangan utama nasional di wilayah kabupaten sudah ditetapkan, tetapi belum tercapai",
                 skor: 1,
               },
               {
                 label:
-                  "Target pendapatan per kapita yang merefleksikan pertumbuhan ekonomi daerah sudah tercapai",
+                  "Target produksi tanaman pangan utama nasional di wilayah kabupaten sudah tercapai",
                 skor: 2,
               },
             ],
@@ -495,6 +502,10 @@ function getUserData() {
   return JSON.parse(localStorage.getItem("userData")) || {};
 }
 const userData = getUserData();
+ if (!userData.nohp) {
+    alert("⚠️ Anda belum login. Silakan masuk terlebih dahulu.");
+    window.location.href = "index.html"; // Ganti ke halaman login/awal kamu
+  }
 const draft = JSON.parse(localStorage.getItem(`draft-${userData.nohp}`)) || {};
 Object.assign(jawabanUser, draft.jawaban || {});
 
@@ -547,127 +558,256 @@ Object.assign(jawabanUser, draft.jawaban || {});
         const uploadBox = document.createElement("div");
         uploadBox.className = "mb-4";
         uploadBox.innerHTML = `
-          <label for="dokumen" class="form-label">Unggah Dokumen Pendukung (Opsional)</label>
-          <input type="file" class="form-control" id="dokumen" accept=".pdf,.doc,.docx,.jpg,.png" />
-          <small class="text-muted fst-italic">* Jika tersedia, mohon unggah dokumen yang mendukung jawaban Anda</small>
-        `;
+        <label class="form-label">Unggah Dokumen Pendukung (Opsional)</label>
+        <div class="upload-group">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <input type="file" class="form-control" name="dokumen[]" accept=".pdf,.doc,.docx,.jpg,.png" />
+            <button type="button" class="btn btn-sm btn-success tambah-file-btn" data-kategori="${kategori}">+</button>
+          </div>
+          <div id="info-dokumen-terupload" class="text-muted small"></div>
+        </div>
+        <small class="text-muted fst-italic">* Jika tersedia, mohon unggah dokumen yang mendukung jawaban Anda</small>
+      `;
         container.appendChild(uploadBox);
+
+       const namaKategori = judulKategori[kategori] || kategori;
+      tampilkanDaftarUpload(namaKategori);
 
         // === Tombol SIMPAN & LANJUT ===
         const btnSimpan = document.createElement("button");
         btnSimpan.className = "btn btn-outline-success rounded-pill px-4";
         btnSimpan.textContent = "Simpan";
-        btnSimpan.onclick = () => {
-  const userData = getUserData();
-  if (!userData.nohp) {
-    alert("Gagal menyimpan: data user tidak ditemukan.");
-    return;
-  }
+        btnSimpan.onclick = async () => {
+        const userData = getUserData();
+        if (!userData.nohp) {
+          alert("Gagal menyimpan: data user tidak ditemukan.");
+          return;
+        }
 
-  let totalSkor = 0;
-  for (const skor of Object.values(jawabanUser)) {
-    totalSkor += skor;
-  }
+        // ✅ VALIDASI: pastikan semua indikator sudah dijawab
+        //const semuaIdSoal = Object.values(soalData)
+          //.flat()
+          //.map((s) => s.id);
 
-  const hasilDraft = {
-    ...userData,
-    jawaban: jawabanUser,
-    skor: totalSkor,
-    isDraft: true,
-    timestamp: new Date().toISOString(),
-  };
+        //const belumDijawab = semuaIdSoal.filter((id) => !(id in jawabanUser));
 
-  // Simpan draft ke localStorage
-  localStorage.setItem(`draft-${userData.nohp}`, JSON.stringify(hasilDraft));
+        //if (belumDijawab.length > 0) {
+         // alert("⚠️ Masih ada pertanyaan yang belum dijawab. Mohon lengkapi dulu sebelum menyimpan.");
+         // return;
+       // }
 
-  // Simpan draft ke Firebase
-  firebaseService
-    .simpanBagianData(userData.nohp, "formWajib", hasilDraft)
-    .then(() => {
-      alert("✅ Draft berhasil disimpan ke Firebase.");
-    })
-    .catch((error) => {
-      console.error("Gagal simpan draft:", error);
-      alert("❌ Gagal menyimpan draft ke Firebase.");
-    });
-};
-  
+        // Upload dokumen (jika ada)
+        const uploadGroup = document.querySelector(".upload-group");
+        const fileInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+        let unggahDokumen = false;
+        let hasilUpload = [];
+
+        for (const input of fileInputs) {
+          const file = input.files[0];
+          if (file) {
+            try {
+              const fileURL = await uploadDokumenKeServer(file);
+              hasilUpload.push({
+                fileName: file.name,
+                fileURL,
+              });
+              unggahDokumen = true;
+            } catch (err) {
+              console.error("Gagal upload:", err);
+            }
+          }
+        }
+
+        if (unggahDokumen) {
+          const namaKategori = judulKategori[kategori] || kategori;
+          dokumenPerKategori[namaKategori] = hasilUpload;
+          tampilkanDaftarUpload(namaKategori);
+        }
+
+        let totalSkor = 0;
+        for (const skor of Object.values(jawabanUser)) {
+          totalSkor += skor;
+        }
+
+        const hasilDraft = {
+          ...userData,
+          jawaban: jawabanUser,
+          skor: totalSkor,
+          isDraft: true,
+          timestamp: new Date().toISOString(),
+          unggahDokumen,
+          dokumen: dokumenPerKategori,
+        };
+
+        localStorage.setItem(`draft-${userData.nohp}`, JSON.stringify(hasilDraft));
+
+        try {
+          await firebaseService.simpanBagianData(userData.nohp, "formWajib", hasilDraft);
+          alert("✅ Draft berhasil disimpan ke Firebase.");
+        } catch (error) {
+          console.error("Gagal simpan draft:", error);
+          alert("❌ Gagal menyimpan draft ke Firebase.");
+        }
+      };
+
         const btnLanjut = document.createElement("button");
         btnLanjut.className = "btn btn-warning text-white rounded-pill px-4";
         btnLanjut.textContent = "Selanjutnya";
-        btnLanjut.onclick = () => {
-          const userData = getUserData();
-          if (!userData.nohp) {
-            alert("Data user tidak ditemukan.");
-            return;
-          }
+        btnLanjut.onclick = async () => {
+  try {
+    const userData = getUserData();
+    if (!userData.nohp) {
+      alert("Data user tidak ditemukan.");
+      return;
+    }
 
-          let totalSkor = 0;
-          for (const skor of Object.values(jawabanUser)) {
-            totalSkor += skor;
-          }
+    const idSoalAktif = soalData[kategori].map((s) => s.id);
+    const belumDijawab = idSoalAktif.filter((id) => !(id in jawabanUser));
 
-          const hasil = {
-            ...userData,
-            jawaban: jawabanUser,
-            skor: totalSkor,
-            isDraft: false,
-            timestamp: new Date().toISOString(),
-          };
+    if (belumDijawab.length > 0) {
+      alert("⚠️ Masih ada pertanyaan yang belum dijawab di kategori ini.");
+      return;
+    }
 
-          firebaseService
-            .simpanBagianData(userData.nohp, "formWajib", hasil)
-            .then(() => {
-              localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
-              console.log("✅ Data final berhasil dikirim ke Firebase.");
-              // lanjut ke halaman berikut
-              const keys = Object.keys(soalData);
-              const index = keys.indexOf(kategori);
-              const nextKategori = keys[index + 1];
+    const uploadGroup = document.querySelector(".upload-group");
+    const fileInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+    let unggahDokumen = false;
+    let hasilUpload = [];
 
-              if (nextKategori) {
-                const nextBtn = document.querySelector(
-                  `.kategori-buttons button[data-kategori="${nextKategori}"]`
-                );
-                tampilkanSoal(nextKategori, nextBtn);
-              } else {
-                window.location.href = "form-tambahan.html";
-              }
-            })
-            .catch((err) => {
-              console.error("❌ Gagal simpan data final:", err);
-              alert("Gagal menyimpan data final.");
-            });
+    for (const input of fileInputs) {
+      const file = input.files[0];
+      if (file) {
+        const fileURL = await uploadDokumenKeServer(file);
+        hasilUpload.push({
+          fileName: file.name,
+          fileURL,
+        });
+        unggahDokumen = true;
+      }
+    }
 
-          localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
-          console.log("Jawaban disimpan otomatis sebelum lanjut");
+    if (unggahDokumen) {
+      const namaKategori = judulKategori[kategori] || kategori;
+      dokumenPerKategori[namaKategori] = hasilUpload;
+      tampilkanDaftarUpload(namaKategori);
+    }
 
-          const keys = Object.keys(soalData);
-          const index = keys.indexOf(kategori);
-          const nextKategori = keys[index + 1];
+    const hasil = {
+      ...userData,
+      jawaban: jawabanUser,
+      skor: Object.values(jawabanUser).reduce((a, b) => a + b, 0),
+      isDraft: false,
+      timestamp: new Date().toISOString(),
+      unggahDokumen,
+      dokumen: dokumenPerKategori,
+    };
 
-          if (nextKategori) {
-            const nextBtn = document.querySelector(
-              `.kategori-buttons button[data-kategori="${nextKategori}"]`
-            );
-            tampilkanSoal(nextKategori, nextBtn);
-          } else {
-            window.location.href = "form-tambahan.html";
-          }
-        };
+    await firebaseService.simpanBagianData(userData.nohp, "formWajib", hasil);
+    localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
+    console.log("✅ Data final berhasil dikirim ke Firebase.");
 
-        const btnKeluar = document.createElement("button");
-btnKeluar.className = "btn btn-danger rounded-pill px-4";
-btnKeluar.textContent = "Keluar";
+    // lanjut ke kategori berikutnya
+    const keys = Object.keys(soalData);
+    const index = keys.indexOf(kategori);
+    const nextKategori = keys[index + 1];
 
-btnKeluar.onclick = () => {
-  const konfirmasi = confirm("Apakah Anda yakin ingin keluar tanpa melanjutkan pengisian?");
-  if (konfirmasi) {
-    window.location.href = "index.html"; // Ganti ke halaman sesuai alur kamu
+    if (nextKategori) {
+      const nextBtn = document.querySelector(`.kategori-buttons button[data-kategori="${nextKategori}"]`);
+      tampilkanSoal(nextKategori, nextBtn);
+    } else {
+      window.location.href = "form-tambahan.html";
+    }
+  } catch (err) {
+    console.error("❌ Gagal simpan data final:", err);
+    alert("Terjadi kesalahan saat simpan dokumen.");
   }
 };
 
+        const btnKeluar = document.createElement("button");
+        btnKeluar.className = "btn rounded-pill px-4";
 
+    if (kategori === "pilar5") {
+      btnKeluar.classList.add("btn-primary", "text-white");
+      btnKeluar.textContent = "Submit";
+      btnKeluar.onclick = async () => {
+      try {
+        const userData = getUserData();
+        if (!userData.nohp) {
+          alert("Data user tidak ditemukan.");
+          return;
+        }
+
+        // Validasi semua soal terjawab
+        const semuaIdSoal = Object.values(soalData).flat().map(s => s.id);
+        const belumDijawab = semuaIdSoal.filter(id => !(id in jawabanUser));
+        if (belumDijawab.length > 0) {
+          alert("⚠️ Masih ada pertanyaan yang belum dijawab.");
+          return;
+        }
+
+        // Ambil semua dokumen dari kategori terakhir
+        let unggahDokumen = false;const uploadGroup = document.querySelector(".upload-group");
+        const fileInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+        let hasilUpload = [];
+
+        for (const input of fileInputs) {
+          const file = input.files[0];
+          if (file) {
+            const fileURL = await uploadDokumenKeServer(file);
+            hasilUpload.push({
+              fileName: file.name,
+              fileURL,
+            });
+            unggahDokumen = true;
+          }
+        }
+
+        if (unggahDokumen) {
+          const namaKategori = judulKategori[kategori] || kategori;
+          dokumenPerKategori[namaKategori] = hasilUpload;
+          tampilkanDaftarUpload(namaKategori);
+        }
+
+        // Hitung skor
+        let totalSkor = 0;
+        for (const skor of Object.values(jawabanUser)) {
+          totalSkor += skor;
+        }
+
+        // Simpan final ke Firebase
+        const hasil = {
+          ...userData,
+          jawaban: jawabanUser,
+          skor: totalSkor,
+          isDraft: false,
+          timestamp: new Date().toISOString(),
+          unggahDokumen,
+          dokumen: dokumenPerKategori,
+        };
+
+        localStorage.setItem("hasilAssessment", JSON.stringify(hasil));
+        await firebaseService.simpanBagianData(userData.nohp, "formWajib", hasil);
+
+        alert("✅ Form wajib berhasil disubmit!");
+        window.location.href = "consent.html";
+
+      } catch (err) {
+        console.error("❌ Gagal simpan data final:", err);
+        alert("Terjadi kesalahan saat menyimpan data.");
+      }
+    };
+
+    } else {
+      // Tombol keluar biasa
+      btnKeluar.classList.add("btn-danger");
+      btnKeluar.textContent = "Keluar";
+      btnKeluar.onclick = () => {
+        const konfirmasi = confirm("Apakah Anda yakin ingin keluar tanpa melanjutkan pengisian?");
+        if (konfirmasi) {
+          window.location.href = "index.html";
+        }
+  };
+}
         const infoDraft = document.createElement("div");
         infoDraft.className = "text-muted mt-2";
         infoDraft.innerHTML =
@@ -684,7 +824,30 @@ btnKeluar.onclick = () => {
         tombolNavigasi.appendChild(tombolAksi);
         tombolNavigasi.appendChild(infoDraft);
         container.appendChild(tombolNavigasi);
-      }
+
+       document.addEventListener("click", function (e) {
+        if (e.target && e.target.classList.contains("tambah-file-btn")) {
+          const uploadGroup = e.target.closest(".upload-group");
+          if (!uploadGroup) return;
+
+          const existingInputs = uploadGroup.querySelectorAll('input[type="file"][name="dokumen[]"]');
+          if (existingInputs.length >= 5) {
+            alert("⚠️ Maksimal hanya boleh mengunggah 5 dokumen.");
+            return;
+          }
+
+          const newInput = document.createElement("div");
+          newInput.className = "mt-2";
+          newInput.innerHTML = `
+            <input type="file" class="form-control" name="dokumen[]" accept=".pdf,.doc,.docx,.jpg,.png" />
+          `;
+
+          // Sisipkan sebelum info upload
+          const infoBox = uploadGroup.querySelector("#info-dokumen-terupload");
+          uploadGroup.insertBefore(newInput, infoBox);
+        }
+      });
+    }
 
       function jawab(id, skor) {
         jawabanUser[id] = skor;
@@ -707,6 +870,17 @@ btnKeluar.onclick = () => {
           alert("Sudah di kategori terakhir.");
         }
       }
+
+      function tampilkanDaftarUpload(namaKategori) {
+      const infoBox = document.getElementById("info-dokumen-terupload");
+      if (!infoBox) return;
+
+      const daftar = (dokumenPerKategori[namaKategori] || [])
+        .map(file => `📄 <em>${file.fileName}</em>`)
+        .join("<br>");
+
+      infoBox.innerHTML = daftar ? `Sudah upload:<br>${daftar}` : "";
+    }
 
       window.onload = () => {
   const tombolPertama = document.querySelector(".kategori-buttons button");
