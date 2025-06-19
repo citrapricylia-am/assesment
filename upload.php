@@ -15,7 +15,7 @@ if (isset($_FILES["file"])) {
     $allowedTypes = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($file["tmp_name"], $targetFilePath)) {
-            $fileURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . ":/assesment/" . $_SERVER['HTTP_HOST'] . "/" . $targetFilePath;
+            $fileURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . ":/progres.kabupatenlestari.org/" . $_SERVER['HTTP_HOST'] . "/" . $targetFilePath;
             echo json_encode(["success" => true, "url" => $fileURL]);
         } else {
             echo json_encode(["success" => false, "error" => "Gagal memindahkan file."]);

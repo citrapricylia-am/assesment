@@ -361,10 +361,8 @@
         const namaKategori = judulKategori[kategori] || kategori;
         const infoBox = document.getElementById("info-dokumen-terupload");
 
-        if (dokumenPerKategori[namaKategori]) {
-          const namaFile = dokumenPerKategori[namaKategori].fileName;
-          infoBox.innerHTML = `📄 Sudah upload: <em>${namaFile}</em>`;
-        }
+        tampilkanDaftarUpload(namaKategori);
+
 
 // Ambil data user
 const userData = JSON.parse(localStorage.getItem("userData")) || {};
@@ -635,10 +633,13 @@ function tampilkanDaftarUpload(namaKategori) {
   const infoBox = document.getElementById("info-dokumen-terupload");
   if (!infoBox) return;
 
-  const daftar = (dokumenPerKategori[namaKategori] || [])
-    .map(file => `📄 <em>${file.fileName}</em>`)
-    .join("<br>");
-  infoBox.innerHTML = daftar ? `Sudah upload:<br>${daftar}` : "";
+  if (dokumenPerKategori[namaKategori]) {
+    const daftarFile = dokumenPerKategori[namaKategori]; // array
+    const daftarHTML = daftarFile
+  .map(file => `📄 ${file.fileName}`)
+  .join("<br>");
+    infoBox.innerHTML = `Sudah upload:<br>${daftarHTML}`;
+  }
 }
 
   window.onload = () => {
@@ -647,12 +648,18 @@ function tampilkanDaftarUpload(namaKategori) {
 
   const userData = JSON.parse(localStorage.getItem("userData")) || {};
   const draft = localStorage.getItem(`draft-tambahan-${userData.nohp}`);
+  let parsed = null;
 
-  if (draft) {
+     if (draft) {
     const parsed = JSON.parse(draft);
     Object.entries(parsed.jawaban || {}).forEach(([id, skor]) => {
       jawabanUser[id] = skor;
     });
+    if (parsed.dokumen) {
+  Object.entries(parsed.dokumen).forEach(([kategori, daftarFile]) => {
+    dokumenPerKategori[kategori] = daftarFile;
+       });
+    }
   }
 
   const tombolPertama = document.querySelector(".kategori-buttons button");

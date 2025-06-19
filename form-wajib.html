@@ -571,7 +571,9 @@ Object.assign(jawabanUser, draft.jawaban || {});
         container.appendChild(uploadBox);
 
        const namaKategori = judulKategori[kategori] || kategori;
-      tampilkanDaftarUpload(namaKategori);
+        tampilkanDaftarUpload(namaKategori);
+
+
 
         // === Tombol SIMPAN & LANJUT ===
         const btnSimpan = document.createElement("button");
@@ -619,7 +621,6 @@ Object.assign(jawabanUser, draft.jawaban || {});
         }
 
         if (unggahDokumen) {
-          const namaKategori = judulKategori[kategori] || kategori;
           dokumenPerKategori[namaKategori] = hasilUpload;
           tampilkanDaftarUpload(namaKategori);
         }
@@ -687,7 +688,6 @@ Object.assign(jawabanUser, draft.jawaban || {});
     }
 
     if (unggahDokumen) {
-      const namaKategori = judulKategori[kategori] || kategori;
       dokumenPerKategori[namaKategori] = hasilUpload;
       tampilkanDaftarUpload(namaKategori);
     }
@@ -904,6 +904,15 @@ Object.assign(jawabanUser, draft.jawaban || {});
         });
         console.log("Draft dimuat ulang untuk:", userData.nohp);
       }
+      if (parsed.dokumen && typeof parsed.dokumen === "object") {
+  Object.entries(parsed.dokumen).forEach(([kategori, daftarFile]) => {
+    dokumenPerKategori[kategori] = daftarFile;
+  });
+}
+// ⬇️ BARU tampilkan soal (karena dokumenPerKategori sudah terisi)
+  const tombolPertama = document.querySelector(".kategori-buttons button");
+  tampilkanSoal("pilar1", tombolPertama);
+
     } else {
       localStorage.removeItem(draftKey);
       console.log("User beda kabupaten. Draft lama dihapus.");
