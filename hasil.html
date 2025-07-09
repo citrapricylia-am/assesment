@@ -103,7 +103,19 @@
       const hasilDraft =
         JSON.parse(localStorage.getItem("hasilAssessment")) || {};
       const unggahDokumen = hasilDraft.unggahDokumen === true;
-      const jawaban = hasilDraft.jawaban || {};
+      const jawaban = hasilDraft.jawaban;
+
+      // Cek apakah jawaban valid
+      if (
+        !jawaban ||
+        typeof jawaban !== "object" ||
+        Object.keys(jawaban).length < 16
+      ) {
+        alert(
+          "❗Data tidak lengkap atau belum diisi. Silakan isi semua indikator terlebih dahulu."
+        );
+        window.location.href = "form-wajib.html";
+      }
 
       // Daftar ID per pilar
       const pilarMap = {
@@ -125,8 +137,8 @@
       function hitungSkorPilar(ids, jawaban) {
         let skor = 0;
         ids.forEach((id) => {
-          const nilai = parseInt(jawaban[id]);
-          if (!isNaN(nilai)) skor += nilai;
+          const nilai = parseInt(jawaban[id]) || 0;
+          skor += nilai;
         });
         return skor;
       }
@@ -186,6 +198,12 @@
         const persenPilar = (skor / max) * 100;
         pilarSkor[pilar] = parseFloat(persenPilar.toFixed(1));
       }
+      if (Object.values(pilarSkor).some((v) => isNaN(v))) {
+        alert(
+          "Terjadi kesalahan dalam menghitung skor. Silakan ulangi pengisian."
+        );
+        window.location.href = "form-wajib.html";
+      }
 
       // Tampilkan chart
       const dataSkor = {
@@ -239,11 +257,17 @@
       console.log("DEBUG data chart:", Object.values(pilarSkor));
       new Chart(document.getElementById("radarChart"), config);
 
-      // Simpan hasil akhir ke localStorage
-      localStorage.setItem(
-        "hasilSkor",
-        JSON.stringify({ totalSkor, persen, kategori, pilarSkor })
-      );
+      // Bentuk objek hasil lengkap
+      const hasilSkor = {
+        totalSkor: totalSkor,
+        persen: persen,
+        kategori: kategori,
+        keterangan: keterangan,
+        pilarSkor: pilarSkor,
+      };
+
+      // Simpan ke localStorage
+      localStorage.setItem("hasilSkor", JSON.stringify(hasilSkor));
     </script>
     <script>
       window.onload = async function () {
@@ -264,7 +288,7 @@
             persen: hasilSkor.persen || 0,
             kategori: hasilSkor.kategori || "",
             pilarSkor: hasilSkor.pilarSkor || {},
-            keterangan: keterangan,
+            keterangan: hasilSkor.keterangan || "",
             unggahDokumen: hasilTambahan.unggahDokumen === true,
           };
 

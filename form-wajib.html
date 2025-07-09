@@ -502,10 +502,15 @@ function getUserData() {
   return JSON.parse(localStorage.getItem("userData")) || {};
 }
 const userData = getUserData();
+if (!localStorage.getItem("userData")) {
+  alert("⚠️ Sesi Anda habis. Silakan login ulang.");
+  window.location.href = "index.html";
+}else {
  if (!userData.nohp) {
     alert("⚠️ Anda belum login. Silakan masuk terlebih dahulu.");
     window.location.href = "index.html"; // Ganti ke halaman login/awal kamu
   }
+}
 const draft = JSON.parse(localStorage.getItem(`draft-${userData.nohp}`)) || {};
 Object.assign(jawabanUser, draft.jawaban || {});
 
@@ -737,13 +742,15 @@ Object.assign(jawabanUser, draft.jawaban || {});
           return;
         }
 
-        // Validasi semua soal terjawab
-        const semuaIdSoal = Object.values(soalData).flat().map(s => s.id);
-        const belumDijawab = semuaIdSoal.filter(id => !(id in jawabanUser));
-        if (belumDijawab.length > 0) {
-          alert("⚠️ Masih ada pertanyaan yang belum dijawab.");
-          return;
-        }
+        // ✅ VALIDASI SEMUA SOAL WAJIB TERISI
+      const semuaIdSoal = Object.values(soalData).flat().map(s => s.id);
+      const jumlahWajib = semuaIdSoal.length;
+      const jumlahTerisi = Object.keys(jawabanUser).length;
+
+      if (jumlahTerisi < jumlahWajib) {
+        alert(`⚠️ Masih ada pertanyaan yang belum dijawab. Saat ini terisi ${jumlahTerisi} dari ${jumlahWajib} indikator.`);
+        return;
+      }
 
         // Ambil semua dokumen dari kategori terakhir
         let unggahDokumen = false;const uploadGroup = document.querySelector(".upload-group");
@@ -888,34 +895,36 @@ Object.assign(jawabanUser, draft.jawaban || {});
 
   const userData = getUserData();
   const draftKey = `draft-${userData.nohp}`;
-  const draft = localStorage.getItem(`draft-${userData.nohp}`);
+  const draft = localStorage.getItem(draftKey);
+
   if (draft) {
     const parsed = JSON.parse(draft);
-    if (parsed && parsed.jawaban && typeof parsed.jawaban === 'object')
- {
-      if (parsed.jawaban) {
+
+    if (parsed && parsed.jawaban && typeof parsed.jawaban === 'object') {
+      // ✅ CEK jika kabupaten berbeda → hapus draft
+      if (parsed.kabupaten && parsed.kabupaten !== userData.kabupaten) {
+        localStorage.removeItem(draftKey);
+        console.log("Draft tidak digunakan karena kabupaten berbeda.");
+      } else {
+        // 🟢 Masukkan semua jawaban ke objek
         Object.entries(parsed.jawaban).forEach(([id, skor]) => {
           jawabanUser[id] = skor;
-
-          const input = document.querySelector(
-            `input[name="soal-${id}"][value="${skor}"]`
-          );
-          if (input) input.checked = true;
         });
+
+        // 🟢 Masukkan juga dokumen (jika ada)
+        if (parsed.dokumen && typeof parsed.dokumen === "object") {
+          Object.entries(parsed.dokumen).forEach(([kategori, daftarFile]) => {
+            dokumenPerKategori[kategori] = daftarFile;
+          });
+        }
+
+        // 🟢 Tampilkan kembali soal pertama dengan jawaban terisi
+        tampilkanSoal("pilar1", tombolPertama);
         console.log("Draft dimuat ulang untuk:", userData.nohp);
       }
-      if (parsed.dokumen && typeof parsed.dokumen === "object") {
-  Object.entries(parsed.dokumen).forEach(([kategori, daftarFile]) => {
-    dokumenPerKategori[kategori] = daftarFile;
-  });
-}
-// ⬇️ BARU tampilkan soal (karena dokumenPerKategori sudah terisi)
-  const tombolPertama = document.querySelector(".kategori-buttons button");
-  tampilkanSoal("pilar1", tombolPertama);
-
     } else {
       localStorage.removeItem(draftKey);
-      console.log("User beda kabupaten. Draft lama dihapus.");
+      console.log("Draft tidak valid, dihapus.");
     }
   }
 };
